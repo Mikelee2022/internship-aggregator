@@ -2,6 +2,8 @@
 
 A full-stack internship aggregation platform built with **React**, **Tailwind CSS**, and **FastAPI**.
 
+**Repo**: [https://github.com/Mikelee2022/internship-aggregator](https://github.com/Mikelee2022/internship-aggregator)
+
 ## Features
 - 🕷️ **Automated Crawler**: Scrapes internship listings (default source: GitHub).
 - 🔍 **Search & Filter**: Filter by keyword, location, or industry.
@@ -40,10 +42,10 @@ Open a new terminal, navigate to the root directory:
 ```bash
 cd frontend
 
-# Install dependencies
+# [x] Install dependencies
 npm install
 
-# Start the development server
+# [x] Start the development server
 npm run dev
 ```
 The application will be running at `http://localhost:5173`.
