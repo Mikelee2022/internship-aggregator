@@ -26,13 +26,34 @@ Whether you're looking for AI/ML specific roles or need to know if a company is 
 - ⚡ **Minimalist UI**: Responsive design built with Tailwind CSS for a seamless desktop and mobile experience.
 - 📊 **One-Click Apply**: Direct links to application pages to save you time.
 
-## 📂 Data Sources
+## 📂 Rich Data Ecosystem
 
-The primary data source is the community-driven [SimplifyJobs/Summer2026-Internships](https://github.com/SimplifyJobs/Summer2026-Internships). 
+The core competency of the Internship Aggregator lies in its **unparalleled data richness**. Unlike other platforms that rely on a single source, we aggregate high-quality listings from a diverse network of sources, ensuring you never miss an opportunity.
 
-The crawler is designed to be modular. It fetches the raw markdown data, parses the company details, roles, and locations, and enriches the data with:
-- **International Friendliness Logic**: Based on metadata and historical sponsorship data.
-- **AI Tagging**: Keyword-based detection in role descriptions.
+### 🌟 Primary Data Sources
+
+We currently track over **10+ premium sources** with specialized data collectors for each:
+
+| Source Type | Source Name | Update Frequency | Description |
+|-------------|-------------|------------------|-------------|
+| **Community** | [SimplifyJobs GitHub](https://github.com/SimplifyJobs/Summer2026-Internships) | **Real-time** | The largest community-driven internship repository. |
+| **Official** | **NASA** | Daily | Direct from `intern.nasa.gov`. Verified US Citizen roles. |
+| **Official** | **Google** | Daily | Software, Product, and UX roles from `careers.google.com`. |
+| **Official** | **Apple** | Daily | Hardware & Software engineering roles from `jobs.apple.com`. |
+| **Official** | **Meta** | Daily | Research & Engineering roles from `metacareers.com`. |
+| **Official** | **Microsoft** | Daily | PM & Engineering roles from `careers.microsoft.com`. |
+| **Official** | **Goldman Sachs** | Daily | Finance & Tech roles from `goldmansachs.com`. |
+| **Official** | **JPMorgan Chase** | Daily | SEP & Analyst programs from `careers.jpmorgan.com`. |
+| **Official** | **Morgan Stanley** | Daily | Banking & Tech roles from `morganstanley.com`. |
+| **Official** | **BlackRock** | Daily | Fintech & Analyst roles from `careers.blackrock.com`. |
+
+### ⚙️ Extensible Collector Architecture
+
+Our data collection engine is built for scale and flexibility:
+
+- **Configurable Data Sources**: All sources are defined in `backend/data_sources.json`, allowing for easy additions without code changes.
+- **Specialized Collectors**: Each source type (e.g., `github_readme`, `simulated_company_listing`) has a dedicated collector to handle its specific HTML structure and data format.
+- **Intelligent Parsing**: We don't just scrape links; we extract metadata, detect visa sponsorship, and categorize roles using NLP heuristics.
 
 ## 🛠️ Tech Stack
 
@@ -45,7 +66,7 @@ The crawler is designed to be modular. It fetches the raw markdown data, parses 
 
 ### 1. Backend Setup
 ```bash
-# Clone the repository
+# Clone the repositoryx`
 git clone https://github.com/Mikelee2022/internship-aggregator
 cd internship-aggregator
 
