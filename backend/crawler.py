@@ -219,7 +219,78 @@ def process_simulated_source(source_config, session):
     logging.info(f"Saved {count} listings for {company_name}.")
 
 
+# Import crawlers
+try:
+    from crawlers.nasa import crawl_nasa
+except ImportError:
+    try:
+        from backend.crawlers.nasa import crawl_nasa
+    except ImportError:
+        logging.warning("Playwright crawler (nasa) not found.")
+        crawl_nasa = None
+
+try:
+    from crawlers.meta import crawl_meta
+except ImportError:
+    try:
+        from backend.crawlers.meta import crawl_meta
+    except ImportError:
+        logging.warning("Playwright crawler (meta) not found.")
+        crawl_meta = None
+
+try:
+    from crawlers.apple import crawl_apple
+except ImportError:
+    try:
+        from backend.crawlers.apple import crawl_apple
+    except ImportError:
+        logging.warning("Playwright crawler (apple) not found.")
+    except ImportError:
+        logging.warning("Playwright crawler (apple) not found.")
+        crawl_apple = None
+
+try:
+    from crawlers.goldman_sachs import crawl_goldman_sachs
+except ImportError:
+    try:
+        from backend.crawlers.goldman_sachs import crawl_goldman_sachs
+    except ImportError:
+        logging.warning("Playwright crawler (goldman_sachs) not found.")
+        crawl_goldman_sachs = None
+
+# ... (start of run_crawler)
+
+import argparse
+
+# ... (imports remain)
+
+CRAWLER_STATUS_FILE = os.path.join(os.path.dirname(__file__), 'crawler_status.json')
+
+def load_crawler_status():
+    if not os.path.exists(CRAWLER_STATUS_FILE):
+        return {}
+    try:
+        with open(CRAWLER_STATUS_FILE, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        logging.error(f"Error loading crawler status: {e}")
+        return {}
+
+def save_crawler_status(status):
+    try:
+        with open(CRAWLER_STATUS_FILE, 'w') as f:
+            json.dump(status, f, indent=2)
+    except Exception as e:
+        logging.error(f"Error saving crawler status: {e}")
+
+# ... (rest of imports and helper functions)
+
 def run_crawler():
+    parser = argparse.ArgumentParser(description="Internship Aggregator Crawler")
+    parser.add_argument("--source", type=str, help="Specific source to crawl (by name or type)")
+    parser.add_argument("--force", action="store_true", help="Force crawl even if already done today")
+    args = parser.parse_args()
+
     logging.info("Starting crawler run...")
     create_db_and_tables()
     
@@ -228,19 +299,182 @@ def run_crawler():
         logging.warning("No data sources configured.")
         return
 
+    crawler_status = load_crawler_status()
+    today_str = datetime.utcnow().strftime("%Y-%m-%d")
+
     with Session(engine) as session:
         for source in sources:
-            if not source.get("enabled", True):
-                continue
-                
+            source_name = source.get("name")
             source_type = source.get("type")
             
-            if source_type == "github_readme":
-                process_github_readme(source, session)
-            elif source_type == "simulated_company_listing":
-                process_simulated_source(source, session)
-            else:
-                logging.warning(f"Unknown source type: {source_type} for {source['name']}")
+            # Filter by source argument if provided
+            if args.source:
+                if args.source.lower() not in source_name.lower() and args.source.lower() not in source_type.lower():
+                    continue
+
+            if not source.get("enabled", True):
+                continue
+            
+            # Check status
+            status_key = source_name
+            last_run = crawler_status.get(status_key, {})
+            if not args.force and last_run.get("date") == today_str and last_run.get("status") == "success":
+                logging.info(f"Skipping {source_name}: Already crawled today ({today_str}). Use --force to override.")
+                continue
+
+            logging.info(f"Processing source: {source_name}")
+            
+            items_saved = 0
+            success = False
+            
+            try:
+                if source_type == "github_readme":
+                    # Assume github always runs "successfully" if no critical error, 
+                    # but we might want to track actual items in process_github_readme return value.
+                    # For now, we wrap it to catch exceptions but it manages its own logging.
+                    # Refactoring process_github_readme to return count would be better, 
+                    # but adhering to minimal changes, we'll assume success if no exception.
+                    process_github_readme(source, session) 
+                    success = True 
+                    # Note: process_github_readme doesn't return count yet, so we can't log it accurately in status without modifying it.
+                    # We will update status date at least.
+
+                elif source_type == "simulated_company_listing":
+                    process_simulated_source(source, session)
+                    success = True
+
+                elif source_type == "nasa_official":
+                    if crawl_nasa:
+                        nasa_internships = crawl_nasa(source)
+                        count = 0
+                        for data in nasa_internships:
+                            # ... (existing saving logic) ...
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Aerospace'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    requirements=data.get('requirements'),
+                                    salary=data.get('salary'),
+                                    international_score=7, 
+                                    logo_url="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg" 
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} NASA internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("NASA crawler function not imported.")
+
+                elif source_type == "meta_official":
+                    if crawl_meta:
+                        meta_internships = crawl_meta(source)
+                        count = 0
+                        for data in meta_internships:
+                             # ... (existing saving logic) ...
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Technology'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    requirements=data.get('requirements'),
+                                    salary=data.get('salary'),
+                                    international_score=8, 
+                                    logo_url=data.get('logo_url', "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg")
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Meta internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Meta crawler function not imported.")
+
+                elif source_type == "apple_official":
+                    if crawl_apple:
+                        apple_internships = crawl_apple(source)
+                        count = 0
+                        for data in apple_internships:
+                             # ... (existing saving logic) ...
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Technology'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    requirements=data.get('requirements'),
+                                    salary=data.get('salary'),
+                                    international_score=7,
+                                    logo_url="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Apple internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Apple crawler function not imported.")
+
+
+                elif source_type == "goldman_sachs_official":
+                    if crawl_goldman_sachs:
+                        gs_internships = crawl_goldman_sachs(source)
+                        count = 0
+                        for data in gs_internships:
+                            # Sync check
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Finance'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    source="goldman_sachs_official",
+                                    logo_url=data.get('logo_url', "https://upload.wikimedia.org/wikipedia/commons/6/61/Goldman_Sachs.svg"),
+                                    international_score=6 # Usually strict
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Goldman Sachs internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Goldman Sachs crawler function not imported.")
+
+                else:
+                    logging.warning(f"Unknown source type: {source_type} for {source['name']}")
+                
+                # Update status if successful
+                if success:
+                    crawler_status[status_key] = {
+                        "date": today_str,
+                        "status": "success",
+                        "items_saved": items_saved, # Note: github/simulated might report 0 effectively if we don't capture return vars, but that's ok for now
+                        "timestamp": datetime.utcnow().isoformat()
+                    }
+                    save_crawler_status(crawler_status)
+
+            except Exception as e:
+                logging.error(f"Failed to crawl {source_name}: {e}")
+                # We do NOT update status on failure, so it retries next time
         
         session.commit()
         logging.info("Crawler run complete.")

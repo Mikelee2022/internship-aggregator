@@ -7,5 +7,41 @@
         "frequency": "Real-time",
         "description": "Community-driven list of Summer 2026 internships.",
         "enabled": true
+    },
+    {
+        "id": "nasa_official",
+        "name": "NASA STEM Gateway",
+        "type": "nasa_official",
+        "url": "https://stemgateway.nasa.gov/public/s/explore-opportunities",
+        "frequency": "Real-time",
+        "description": "Official NASA Internship Listings (Crawled)",
+        "enabled": true
+    },
+    {
+        "id": "meta_official",
+        "name": "Meta Careers",
+        "type": "meta_official",
+        "url": "https://www.metacareers.com/jobsearch?roles[0]=Internship",
+        "frequency": "Real-time",
+        "description": "Official Meta Internship Listings (Crawled)",
+        "enabled": true
+    },
+    {
+        "id": "apple_official",
+        "name": "Apple Jobs",
+        "type": "apple_official",
+        "url": "https://jobs.apple.com/en-us/search?search=Intern&sort=relevance&location=united-states-USA",
+        "frequency": "Real-time",
+        "description": "Official Apple Internship Listings (Crawled)",
+        "enabled": true
+    },
+    {
+        "id": "goldman_sachs_official",
+        "name": "Goldman Sachs Programs",
+        "type": "goldman_sachs_official",
+        "url": "https://www.goldmansachs.com/careers/students/programs-and-internships?0=gscom%253Aprogram-type%252Finternship",
+        "frequency": "Real-time",
+        "description": "Official Goldman Sachs Internship Listings (Crawled)",
+        "enabled": true
     }
 ]

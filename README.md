@@ -39,6 +39,30 @@ We aggregate data from high-quality community-driven sources:
 | Source Type | Source Name | Update Frequency | Description |
 |-------------|-------------|------------------|-------------|
 | **Community** | [SimplifyJobs GitHub](https://github.com/SimplifyJobs/Summer2026-Internships) | **Real-time** | The largest community-driven internship repository. |
+| **Official** | [Goldman Sachs](https://www.goldmansachs.com/careers) | **Crawled** | Official Goldman Sachs internship programs. |
+| **Official** | [Apple Careers](https://jobs.apple.com) | **Crawled** | Engineering and Operations internships at Apple. |
+| **Official** | [Meta Careers](https://www.metacareers.com) | **Crawled** | Internships across Meta's family of apps. |
+| **Official** | [NASA STEM](https://stemgateway.nasa.gov) | **Crawled** | Official NASA STEM engagement opportunities. |
+
+### 🔌 API Documentation
+
+Our backend exposes a RESTful API for accessing internship data and source configurations.
+
+#### `GET /internships`
+Retrieve a paginated list of internships.
+
+**Parameters:**
+- `offset` (int, default=0): Number of items to skip.
+- `limit` (int, default=12): Number of items to return.
+- `search` (string, optional): Search term for company, role, or industry.
+- `sort_by_date` (bool, default=true): Sort results by posting date.
+- `source` (string, optional): Filter by source identifier (e.g., `goldman_sachs_official`).
+
+#### `GET /sources`
+Retrieve a list of all configured data sources.
+
+**Response:**
+Returns an array of source objects containing `name`, `type`, `url`, and `enabled` status.
 
 ### ⚙️ Extensible Collector Architecture
 

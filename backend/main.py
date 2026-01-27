@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, Query
 from sqlmodel import Session, select, func
 from typing import List, Optional, Dict, Any
+import json
+import os
 from .database import create_db_and_tables, get_session
 from .models import Internship
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +21,21 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_headers=["*"],
 )
+
+def load_data_sources():
+    try:
+        json_path = os.path.join(os.path.dirname(__file__), 'data_sources.json')
+        with open(json_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading data sources: {e}")
+        return []
+
+@app.get("/sources", response_model=List[Dict[str, Any]])
+def get_sources():
+    return load_data_sources()
 
 @app.get("/internships", response_model=Dict[str, Any])
 def read_internships(
@@ -27,9 +43,13 @@ def read_internships(
     limit: int = 12,
     search: Optional[str] = None,
     sort_by_date: bool = True,
+    source: Optional[str] = None,
     session: Session = Depends(get_session)
 ):
     query = select(Internship)
+    if source:
+        query = query.where(Internship.source == source)
+
     if search:
         query = query.where(
             (Internship.company.contains(search)) | 
