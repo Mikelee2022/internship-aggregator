@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 body {
-  background-color: #f8fafc;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  @apply bg-slate-50 text-slate-900 transition-colors duration-300;
+}
+
+/* Dark mode overrides applied when 'dark' class is present on html/body */
+:root.dark body {
+  @apply bg-slate-900 text-slate-100;
 }

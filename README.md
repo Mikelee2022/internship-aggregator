@@ -9,6 +9,8 @@
 
 A powerful full-stack internship aggregation platform designed to help students find, filter, and track their dream internships. Specifically optimized for Summer 2026 internship cycles.
 
+![Dashboard Preview](assets/homepage_preview.png)
+
 ---
 
 ## 📖 Project Overview
