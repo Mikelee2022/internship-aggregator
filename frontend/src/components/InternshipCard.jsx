@@ -37,8 +37,15 @@ const InternshipCard = ({ internship }) => {
                                 </div>
                             )}
                             <div>
-                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
-                                    {internship.role}
+                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white leading-tight">
+                                    <a
+                                        href={internship.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    >
+                                        {internship.role}
+                                    </a>
                                 </h3>
                                 <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
                                     {internship.company}

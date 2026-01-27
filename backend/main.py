@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, Query
-from sqlmodel import Session, select
-from typing import List, Optional
+from sqlmodel import Session, select, func
+from typing import List, Optional, Dict, Any
 from .database import create_db_and_tables, get_session
 from .models import Internship
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,10 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/internships", response_model=List[Internship])
+@app.get("/internships", response_model=Dict[str, Any])
 def read_internships(
     offset: int = 0,
-    limit: int = 100,
+    limit: int = 12,
     search: Optional[str] = None,
     sort_by_date: bool = True,
     session: Session = Depends(get_session)
@@ -37,9 +37,17 @@ def read_internships(
             (Internship.industry.contains(search))
         )
     
+    # Get total count
+    count_query = select(func.count()).select_from(query.subquery())
+    total = session.exec(count_query).one()
+
     if sort_by_date:
         query = query.order_by(Internship.posted_date.desc())
         
     query = query.offset(offset).limit(limit)
     internships = session.exec(query).all()
-    return internships
+    
+    return {
+        "items": internships,
+        "total": total
+    }

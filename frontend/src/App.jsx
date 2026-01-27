@@ -1,63 +1,38 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import InternshipCard from './components/InternshipCard';
 import SearchBar from './components/SearchBar';
 import useDarkMode from './hooks/useDarkMode';
-import { LayoutGrid, Sparkles, AlertCircle, Sun, Moon } from 'lucide-react';
+import { LayoutGrid, Sparkles, AlertCircle, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const API_URL = 'http://127.0.0.1:8000';
-const ITEMS_PER_PAGE = 18;
+const ITEMS_PER_PAGE = 12;
 
 function App() {
   const [internships, setInternships] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1); // 1-indexed for UI
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, toggleTheme] = useDarkMode();
 
-  // Observer for infinite scroll
-  const observer = useRef();
-  const lastInternshipElementRef = useCallback(node => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prevPage => prevPage + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loading, hasMore]);
-
-
-  // Deduplicate and append helper
-  const mergeInternships = (existing, newItems) => {
-    const existingIds = new Set(existing.map(i => i.id));
-    const uniqueNew = newItems.filter(i => !existingIds.has(i.id));
-    return [...existing, ...uniqueNew];
-  };
-
-  const fetchInternships = useCallback(async (query = '', pageNum = 0, reset = false) => {
+  const fetchInternships = useCallback(async (query = '', pageNum = 1) => {
     setLoading(true);
     setError(null);
     try {
       const params = {
-        offset: pageNum * ITEMS_PER_PAGE,
+        offset: (pageNum - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
       };
       if (query) params.search = query;
 
       const response = await axios.get(`${API_URL}/internships`, { params });
-      const newInternships = response.data;
+      // Expecting { items: [], total: number }
+      const { items, total } = response.data;
 
-      setInternships(prev => {
-        if (reset) return newInternships;
-        return mergeInternships(prev, newInternships);
-      });
-
-      // Stop if we fetched fewer items than requested (end of list)
-      setHasMore(newInternships.length === ITEMS_PER_PAGE);
+      setInternships(items);
+      setTotal(total);
     } catch (err) {
       console.error(err);
       setError('Failed to fetch internships. Is the backend running?');
@@ -66,22 +41,24 @@ function App() {
     }
   }, []);
 
-  // Initial load and search change
+  // Effect to load data on page or search change
   useEffect(() => {
-    setPage(0);
-    fetchInternships(searchQuery, 0, true);
-  }, [searchQuery, fetchInternships]);
-
-  // Load more pages
-  useEffect(() => {
-    if (page > 0) {
-      fetchInternships(searchQuery, page, false);
-    }
+    fetchInternships(searchQuery, page);
   }, [page, searchQuery, fetchInternships]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
+    setPage(1); // Reset to first page
   };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= Math.ceil(total / ITEMS_PER_PAGE)) {
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-900 transition-colors duration-300">
@@ -99,7 +76,7 @@ function App() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-500 dark:text-slate-400"
+              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-500 dark:text-slate-400 cursor-pointer"
               aria-label="Toggle Dark Mode"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
@@ -135,32 +112,51 @@ function App() {
           </div>
         ) : (
           <>
-            {internships.length === 0 && !loading ? (
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-white dark:bg-slate-800 rounded-xl h-64 border border-slate-200 dark:border-slate-700"></div>
+                ))}
+              </div>
+            ) : internships.length === 0 ? (
               <div className="text-center py-20">
                 <h3 className="text-lg font-medium text-slate-900 dark:text-white">No internships found</h3>
                 <p className="text-slate-500 dark:text-slate-400">Try adjusting your search criteria</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {internships.map((internship, index) => {
-                  if (internships.length === index + 1) {
-                    return (
-                      <div ref={lastInternshipElementRef} key={internship.id}>
-                        <InternshipCard internship={internship} />
-                      </div>
-                    );
-                  } else {
-                    return <InternshipCard key={internship.id} internship={internship} />;
-                  }
-                })}
-              </div>
-            )}
-            {loading && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 animate-pulse">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-white dark:bg-slate-800 rounded-xl h-64 border border-slate-200 dark:border-slate-700"></div>
-                ))}
-              </div>
+              <>
+                <div className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+                  Showing <span className="font-semibold text-slate-900 dark:text-white">{(page - 1) * ITEMS_PER_PAGE + 1}-{Math.min(page * ITEMS_PER_PAGE, total)}</span> of <span className="font-semibold text-slate-900 dark:text-white">{total}</span> results
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {internships.map((internship) => (
+                    <InternshipCard key={internship.id} internship={internship} />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="mt-12 flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1}
+                    className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                    Page {page} of {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= totalPages}
+                    className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </>
             )}
           </>
         )}

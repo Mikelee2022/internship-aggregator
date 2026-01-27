@@ -34,20 +34,11 @@ The core competency of the Internship Aggregator lies in its **unparalleled data
 
 ### 🌟 Primary Data Sources
 
-We currently track over **10+ premium sources** with specialized data collectors for each:
+We aggregate data from high-quality community-driven sources:
 
 | Source Type | Source Name | Update Frequency | Description |
 |-------------|-------------|------------------|-------------|
 | **Community** | [SimplifyJobs GitHub](https://github.com/SimplifyJobs/Summer2026-Internships) | **Real-time** | The largest community-driven internship repository. |
-| **Official** | **NASA** | Daily | Direct from `intern.nasa.gov`. Verified US Citizen roles. |
-| **Official** | **Google** | Daily | Software, Product, and UX roles from `careers.google.com`. |
-| **Official** | **Apple** | Daily | Hardware & Software engineering roles from `jobs.apple.com`. |
-| **Official** | **Meta** | Daily | Research & Engineering roles from `metacareers.com`. |
-| **Official** | **Microsoft** | Daily | PM & Engineering roles from `careers.microsoft.com`. |
-| **Official** | **Goldman Sachs** | Daily | Finance & Tech roles from `goldmansachs.com`. |
-| **Official** | **JPMorgan Chase** | Daily | SEP & Analyst programs from `careers.jpmorgan.com`. |
-| **Official** | **Morgan Stanley** | Daily | Banking & Tech roles from `morganstanley.com`. |
-| **Official** | **BlackRock** | Daily | Fintech & Analyst roles from `careers.blackrock.com`. |
 
 ### ⚙️ Extensible Collector Architecture
 

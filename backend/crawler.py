@@ -3,11 +3,23 @@ import re
 import json
 import os
 import random
+import logging
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from sqlmodel import Session, select
 from database import engine, create_db_and_tables
 from models import Internship
+
+# Configure Logging
+log_file_path = os.path.join(os.path.dirname(__file__), 'crawler.log')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(log_file_path),
+        logging.StreamHandler()
+    ]
+)
 
 # Helper function to load config
 def load_data_sources():
@@ -16,7 +28,7 @@ def load_data_sources():
         with open(config_path, 'r') as f:
             return json.load(f)
     except Exception as e:
-        print(f"Error loading data sources config: {e}")
+        logging.error(f"Error loading data sources config: {e}")
         return []
 
 def calculate_international_score(text: str) -> int:
@@ -42,14 +54,14 @@ def process_github_readme(source_config, session):
     Detailed crawler for the GitHub README source.
     """
     url = source_config.get('url')
-    print(f"Fetching data from GitHub source: {url}")
+    logging.info(f"Fetching data from GitHub source: {url}")
     
     try:
         response = requests.get(url)
         response.raise_for_status()
         content = response.text
     except Exception as e:
-        print(f"Error fetching GitHub data: {e}")
+        logging.error(f"Error fetching GitHub data: {e}")
         return
 
     # Use BeautifulSoup to parse HTML content within the markdown
@@ -58,11 +70,12 @@ def process_github_readme(source_config, session):
     # Find the table - assuming it's the first table
     table = soup.find('table')
     if not table:
-        print("No table found in content.")
+        logging.warning("No table found in content.")
         return
 
     rows = table.find_all('tr')
     count = 0
+    errors = 0
     
     for row in rows:
         cols = row.find_all('td')
@@ -152,15 +165,17 @@ def process_github_readme(source_config, session):
             session.add(internship)
             count += 1
         except Exception as e:
+            errors += 1
+            logging.error(f"Error parsing row: {e}")
             continue
             
-    print(f"Scraped and saved {count} new internships from GitHub.")
+    logging.info(f"Scraped and saved {count} new internships from GitHub. Errors encountered: {errors}")
 
 def process_simulated_source(source_config, session):
     """
     Simulates scraping a premium company source based on config.
     """
-    print(f"Processing simulated source: {source_config['name']}")
+    logging.info(f"Processing simulated source: {source_config['name']}")
     config = source_config.get('config', {})
     
     company_name = config.get("company_name", source_config['name'])
@@ -201,15 +216,16 @@ def process_simulated_source(source_config, session):
         session.add(internship)
         count += 1
         
-    print(f"Saved {count} listings for {company_name}.")
+    logging.info(f"Saved {count} listings for {company_name}.")
 
 
 def run_crawler():
+    logging.info("Starting crawler run...")
     create_db_and_tables()
     
     sources = load_data_sources()
     if not sources:
-        print("No data sources configured.")
+        logging.warning("No data sources configured.")
         return
 
     with Session(engine) as session:
@@ -224,10 +240,10 @@ def run_crawler():
             elif source_type == "simulated_company_listing":
                 process_simulated_source(source, session)
             else:
-                print(f"Unknown source type: {source_type} for {source['name']}")
+                logging.warning(f"Unknown source type: {source_type} for {source['name']}")
         
         session.commit()
-        print("Crawler run complete.")
+        logging.info("Crawler run complete.")
 
 if __name__ == "__main__":
     run_crawler()
