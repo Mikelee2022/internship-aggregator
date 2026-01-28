@@ -258,6 +258,24 @@ except ImportError:
         logging.warning("Playwright crawler (goldman_sachs) not found.")
         crawl_goldman_sachs = None
 
+try:
+    from crawlers.microsoft import crawl_microsoft
+except ImportError:
+    try:
+        from backend.crawlers.microsoft import crawl_microsoft
+    except ImportError:
+        logging.warning("Playwright crawler (microsoft) not found.")
+        crawl_microsoft = None
+
+try:
+    from crawlers.jpmorgan_chase import crawl_jpmorgan_chase
+except ImportError:
+    try:
+        from backend.crawlers.jpmorgan_chase import crawl_jpmorgan_chase
+    except ImportError:
+        logging.warning("Playwright crawler (jpmorgan_chase) not found.")
+        crawl_jpmorgan_chase = None
+
 # ... (start of run_crawler)
 
 import argparse
@@ -458,6 +476,60 @@ def run_crawler():
                         success = True
                     else:
                         logging.error("Goldman Sachs crawler function not imported.")
+
+                elif source_type == "microsoft_official":
+                    if crawl_microsoft:
+                        msft_internships = crawl_microsoft(source)
+                        count = 0
+                        for data in msft_internships:
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Technology'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    source="microsoft_official",
+                                    logo_url=data.get('logo_url', "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"),
+                                    international_score=8
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Microsoft internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Microsoft crawler function not imported.")
+
+                elif source_type == "jpmorgan_chase_official":
+                    if crawl_jpmorgan_chase:
+                        jpm_internships = crawl_jpmorgan_chase(source)
+                        count = 0
+                        for data in jpm_internships:
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Finance'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    source="jpmorgan_chase_official",
+                                    logo_url=data.get('logo_url', "https://upload.wikimedia.org/wikipedia/commons/a/af/J_P_Morgan_Chase_Logo_2008.svg"),
+                                    international_score=7
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} JPMC internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("JPMorgan Chase crawler function not imported.")
 
                 else:
                     logging.warning(f"Unknown source type: {source_type} for {source['name']}")

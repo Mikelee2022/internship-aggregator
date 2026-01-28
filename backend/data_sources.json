@@ -43,5 +43,23 @@
         "frequency": "Real-time",
         "description": "Official Goldman Sachs Internship Listings (Crawled)",
         "enabled": true
+    },
+    {
+        "id": "microsoft_official",
+        "name": "Microsoft Careers",
+        "type": "microsoft_official",
+        "url": "https://apply.careers.microsoft.com/careers?query=internship&filter=internship&sort_by=relevance",
+        "frequency": "Real-time",
+        "description": "Official Microsoft Internship Listings (Crawled)",
+        "enabled": true
+    },
+    {
+        "id": "jpmorgan_chase_official",
+        "name": "JPMorgan Chase Careers",
+        "type": "jpmorgan_chase_official",
+        "url": "https://www.jpmorganchase.com/careers/explore-opportunities/programs?deeplink=multiTabNav1::tab1&search=&tags=aoi__Technology__Technology",
+        "frequency": "Real-time",
+        "description": "Official JPMorgan Chase Tech Program Listings (Crawled)",
+        "enabled": true
     }
 ]
