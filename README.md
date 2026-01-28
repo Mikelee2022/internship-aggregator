@@ -34,7 +34,7 @@ The core competency of the Internship Aggregator lies in its **unparalleled data
 
 ### 🌟 Primary Data Sources
 
-We aggregate data from high-quality community-driven sources:
+We aggregate data from high-quality community-driven sources and official career portals:
 
 | Source Type | Source Name | Update Frequency | Description |
 |-------------|-------------|------------------|-------------|
@@ -43,6 +43,17 @@ We aggregate data from high-quality community-driven sources:
 | **Official** | [Apple Careers](https://jobs.apple.com) | **Crawled** | Engineering and Operations internships at Apple. |
 | **Official** | [Meta Careers](https://www.metacareers.com) | **Crawled** | Internships across Meta's family of apps. |
 | **Official** | [NASA STEM](https://stemgateway.nasa.gov) | **Crawled** | Official NASA STEM engagement opportunities. |
+| **Official** | [Microsoft Careers](https://apply.careers.microsoft.com) | **API** | Real-time fetching from Microsoft's career API. |
+| **Official** | [JPMC Careers](https://www.jpmorganchase.com/careers) | **Crawled** | Tech programs and internships at JPMorgan Chase. |
+| **Official** | [Morgan Stanley](https://www.morganstanley.com/careers) | **API** | Tech programs for students at Morgan Stanley. |
+
+### 🔍 Automated Crawlers
+
+Our platform uses sophisticated collection methods tailored to each source:
+
+- **Direct API Integration**: For sources like Microsoft and Morgan Stanley, we interact directly with their internal career APIs for maximum speed and accuracy.
+- **Browser Automation (Playwright)**: For dynamic websites like Apple, Meta, and JPMorgan Chase, we use headless browser automation to navigate, click tabs, and extract data exactly as a user would.
+- **Markdown Parsing**: For community lists on GitHub, we parse raw markdown files to extract structured internship data.
 
 ### 🔌 API Documentation
 

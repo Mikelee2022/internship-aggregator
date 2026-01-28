@@ -276,6 +276,15 @@ except ImportError:
         logging.warning("Playwright crawler (jpmorgan_chase) not found.")
         crawl_jpmorgan_chase = None
 
+try:
+    from crawlers.morgan_stanley import crawl_morgan_stanley
+except ImportError:
+    try:
+        from backend.crawlers.morgan_stanley import crawl_morgan_stanley
+    except ImportError:
+        logging.warning("Playwright crawler (morgan_stanley) not found.")
+        crawl_morgan_stanley = None
+
 # ... (start of run_crawler)
 
 import argparse
@@ -530,6 +539,33 @@ def run_crawler():
                         success = True
                     else:
                         logging.error("JPMorgan Chase crawler function not imported.")
+
+                elif source_type == "morgan_stanley_official":
+                    if crawl_morgan_stanley:
+                        ms_internships = crawl_morgan_stanley(source)
+                        count = 0
+                        for data in ms_internships:
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Finance'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    source="morgan_stanley_official",
+                                    logo_url=data.get('logo_url', "https://upload.wikimedia.org/wikipedia/commons/3/34/Morgan_Stanley_Logo_1.svg"),
+                                    international_score=6
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Morgan Stanley internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Morgan Stanley crawler function not imported.")
 
                 else:
                     logging.warning(f"Unknown source type: {source_type} for {source['name']}")

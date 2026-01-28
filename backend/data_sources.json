@@ -6,6 +6,7 @@
         "url": "https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/README.md",
         "frequency": "Real-time",
         "description": "Community-driven list of Summer 2026 internships.",
+        "logo_url": "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/assets/logo.png",
         "enabled": true
     },
     {
@@ -15,6 +16,7 @@
         "url": "https://stemgateway.nasa.gov/public/s/explore-opportunities",
         "frequency": "Real-time",
         "description": "Official NASA Internship Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg",
         "enabled": true
     },
     {
@@ -24,6 +26,7 @@
         "url": "https://www.metacareers.com/jobsearch?roles[0]=Internship",
         "frequency": "Real-time",
         "description": "Official Meta Internship Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
         "enabled": true
     },
     {
@@ -33,6 +36,7 @@
         "url": "https://jobs.apple.com/en-us/search?search=Intern&sort=relevance&location=united-states-USA",
         "frequency": "Real-time",
         "description": "Official Apple Internship Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
         "enabled": true
     },
     {
@@ -42,6 +46,7 @@
         "url": "https://www.goldmansachs.com/careers/students/programs-and-internships?0=gscom%253Aprogram-type%252Finternship",
         "frequency": "Real-time",
         "description": "Official Goldman Sachs Internship Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Goldman_Sachs.svg",
         "enabled": true
     },
     {
@@ -51,6 +56,7 @@
         "url": "https://apply.careers.microsoft.com/careers?query=internship&filter=internship&sort_by=relevance",
         "frequency": "Real-time",
         "description": "Official Microsoft Internship Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
         "enabled": true
     },
     {
@@ -60,6 +66,17 @@
         "url": "https://www.jpmorganchase.com/careers/explore-opportunities/programs?deeplink=multiTabNav1::tab1&search=&tags=aoi__Technology__Technology",
         "frequency": "Real-time",
         "description": "Official JPMorgan Chase Tech Program Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/af/J_P_Morgan_Chase_Logo_2008.svg",
+        "enabled": true
+    },
+    {
+        "id": "morgan_stanley_official",
+        "name": "Morgan Stanley Careers",
+        "type": "morgan_stanley_official",
+        "url": "https://www.morganstanley.com/careers/career-opportunities-search?opportunity=sg&businessArea=Technology",
+        "frequency": "Real-time",
+        "description": "Official Morgan Stanley Tech Program Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Morgan_Stanley_Logo_1.svg",
         "enabled": true
     }
 ]

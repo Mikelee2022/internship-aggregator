@@ -15,9 +15,11 @@ function App() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1); // 1-indexed for UI
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSource, setSelectedSource] = useState(null);
+  const [sources, setSources] = useState([]);
   const [theme, toggleTheme] = useDarkMode();
 
-  const fetchInternships = useCallback(async (query = '', pageNum = 1) => {
+  const fetchInternships = useCallback(async (query = '', pageNum = 1, sourceId = null) => {
     setLoading(true);
     setError(null);
     try {
@@ -26,6 +28,7 @@ function App() {
         limit: ITEMS_PER_PAGE,
       };
       if (query) params.search = query;
+      if (sourceId) params.source = sourceId;
 
       const response = await axios.get(`${API_URL}/internships`, { params });
       // Expecting { items: [], total: number }
@@ -41,14 +44,32 @@ function App() {
     }
   }, []);
 
-  // Effect to load data on page or search change
+  // Effect to load data on page, search, or source change
   useEffect(() => {
-    fetchInternships(searchQuery, page);
-  }, [page, searchQuery, fetchInternships]);
+    fetchInternships(searchQuery, page, selectedSource);
+  }, [page, searchQuery, selectedSource, fetchInternships]);
+
+  // Effect to load sources
+  useEffect(() => {
+    const fetchSources = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/sources`);
+        setSources(response.data.filter(s => s.enabled));
+      } catch (err) {
+        console.error("Failed to fetch sources", err);
+      }
+    };
+    fetchSources();
+  }, []);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
     setPage(1); // Reset to first page
+  };
+
+  const handleSourceSelect = (sourceId) => {
+    setSelectedSource(prev => prev === sourceId ? null : sourceId);
+    setPage(1);
   };
 
   const handlePageChange = (newPage) => {
@@ -98,6 +119,37 @@ function App() {
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Curated opportunities for students. Updated daily with the latest roles across Tech, Finance, and AI.
           </p>
+        </div>
+
+        {/* Company Logos Row */}
+        <div className="mb-10 overflow-x-auto pb-4 no-scrollbar">
+          <div className="flex items-center gap-6 min-w-max px-4">
+            {sources.map(source => (
+              <button
+                key={source.id}
+                onClick={() => handleSourceSelect(source.id)}
+                className={`flex flex-col items-center gap-2 group transition-all duration-300 ${selectedSource === source.id ? 'opacity-100 scale-110' : 'opacity-60 hover:opacity-100'
+                  }`}
+              >
+                <div className={`w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 border-2 flex items-center justify-center p-3 shadow-sm transition-all ${selectedSource === source.id ? 'border-blue-500 shadow-blue-100 dark:shadow-blue-900/20' : 'border-transparent group-hover:border-slate-200 dark:group-hover:border-slate-700'
+                  }`}>
+                  <img
+                    src={source.logo_url}
+                    alt={source.name}
+                    className="max-w-full max-h-full object-contain filter dark:brightness-90 transition-transform group-hover:scale-110"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(source.name) + "&background=random";
+                    }}
+                  />
+                </div>
+                <span className={`text-xs font-semibold whitespace-nowrap transition-colors ${selectedSource === source.id ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
+                  }`}>
+                  {source.name.split(' ')[0]}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <SearchBar onSearch={handleSearch} />
