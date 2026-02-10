@@ -13,6 +13,7 @@ dist/
 
 # Database
 *.db
+!backend/database.db
 *.sqlite3
 
 # IDE
