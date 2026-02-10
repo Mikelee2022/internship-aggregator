@@ -5,7 +5,7 @@ import SearchBar from './components/SearchBar';
 import useDarkMode from './hooks/useDarkMode';
 import { LayoutGrid, Sparkles, AlertCircle, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 const ITEMS_PER_PAGE = 12;
 
 function App() {
