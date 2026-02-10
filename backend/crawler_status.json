@@ -3,13 +3,13 @@
     "date": "2026-02-10",
     "status": "success",
     "items_saved": 0,
-    "timestamp": "2026-02-10T11:49:27.161675"
+    "timestamp": "2026-02-10T12:23:29.419055"
   },
   "NASA STEM Gateway": {
     "date": "2026-02-10",
     "status": "success",
-    "items_saved": 1,
-    "timestamp": "2026-02-10T11:50:07.957368"
+    "items_saved": 0,
+    "timestamp": "2026-02-10T12:24:24.744031"
   },
   "Meta Careers": {
     "date": "2026-02-10",
@@ -46,5 +46,17 @@
     "status": "success",
     "items_saved": 8,
     "timestamp": "2026-02-10T11:51:57.305081"
+  },
+  "Google Careers": {
+    "date": "2026-02-10",
+    "status": "success",
+    "items_saved": 0,
+    "timestamp": "2026-02-10T12:14:27.916061"
+  },
+  "Amazon Jobs": {
+    "date": "2026-02-10",
+    "status": "success",
+    "items_saved": 10,
+    "timestamp": "2026-02-10T12:14:51.141419"
   }
 }
