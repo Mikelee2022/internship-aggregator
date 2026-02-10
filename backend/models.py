@@ -16,4 +16,5 @@ class Internship(SQLModel, table=True):
     international_score: Optional[int] = Field(default=5, description="1-10 score indicating friendliness to international students")
     logo_url: Optional[str] = None
     url: str
+    source: Optional[str] = Field(default=None, description="Data source ID (e.g., 'google_official', 'amazon_official')")
     posted_date: datetime = Field(default_factory=datetime.utcnow)

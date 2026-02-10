@@ -7,7 +7,7 @@
 
 [English] | [简体中文](./README.zh-CN.md)
 
-A powerful full-stack internship aggregation platform designed to help students find, filter, and track their dream internships. Specifically optimized for Summer 2026 internship cycles.
+A powerful full-stack internship aggregation platform designed to help students find, filter, and track their dream internships. Aggregates **600+ internships** from **10 top companies** and community sources. Specifically optimized for Summer 2026 internship cycles.
 
 ![Dashboard Preview](assets/homepage_preview.png)
 
@@ -46,6 +46,8 @@ We aggregate data from high-quality community-driven sources and official career
 | **Official** | [Microsoft Careers](https://apply.careers.microsoft.com) | **API** | Real-time fetching from Microsoft's career API. |
 | **Official** | [JPMC Careers](https://www.jpmorganchase.com/careers) | **Crawled** | Tech programs and internships at JPMorgan Chase. |
 | **Official** | [Morgan Stanley](https://www.morganstanley.com/careers) | **API** | Tech programs for students at Morgan Stanley. |
+| **Official** | [Google Careers](https://www.google.com/about/careers) | **Crawled** | Software, hardware, and research internships at Google. |
+| **Official** | [Amazon Jobs](https://www.amazon.jobs) | **Crawled** | Engineering and business internships at Amazon. |
 
 ### 🔍 Automated Crawlers
 
@@ -88,7 +90,7 @@ Our data collection engine is built for scale and flexibility:
 - **Frontend**: React (Vite), Tailwind CSS, Lucide Icons.
 - **Backend**: FastAPI (Python), SQLModel (ORM), Uvicorn.
 - **Database**: SQLite (local storage for easy setup).
-- **Automation**: Custom BeautifulSoup/Requests-based crawler.
+- **Automation**: Playwright (browser automation), BeautifulSoup/Requests (HTML parsing).
 
 ## ⚙️ Getting Started
 

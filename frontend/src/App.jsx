@@ -113,17 +113,17 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
             Find Your Dream Internship
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Curated opportunities for students. Updated daily with the latest roles across Tech, Finance, and AI.
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto whitespace-nowrap overflow-hidden text-ellipsis px-4">
+            Curated opportunities for students • Updated daily across Tech, Finance & AI
           </p>
         </div>
 
         {/* Company Logos Row */}
         <div className="mb-10 overflow-x-auto pb-4 no-scrollbar">
-          <div className="flex items-center gap-6 min-w-max px-4">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap px-4">
             {sources.map(source => (
               <button
                 key={source.id}

@@ -78,5 +78,25 @@
         "description": "Official Morgan Stanley Tech Program Listings (Crawled)",
         "logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Morgan_Stanley_Logo_1.svg",
         "enabled": true
+    },
+    {
+        "id": "google_official",
+        "name": "Google Careers",
+        "type": "google_official",
+        "url": "https://www.google.com/about/careers/applications/jobs/results/?q=internship%202026",
+        "frequency": "Real-time",
+        "description": "Official Google Internship Listings (Crawled)",
+        "logo_url": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+        "enabled": true
+    },
+    {
+        "id": "amazon_official",
+        "name": "Amazon Jobs",
+        "type": "amazon_official",
+        "url": "https://www.amazon.jobs/en/search?base_query=internship+2026&loc_query=United+States",
+        "frequency": "Real-time",
+        "description": "Official Amazon Internship Listings (Crawled)",
+        "logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+        "enabled": true
     }
 ]

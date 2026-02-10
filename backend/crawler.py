@@ -285,6 +285,24 @@ except ImportError:
         logging.warning("Playwright crawler (morgan_stanley) not found.")
         crawl_morgan_stanley = None
 
+try:
+    from crawlers.google import crawl_google
+except ImportError:
+    try:
+        from backend.crawlers.google import crawl_google
+    except ImportError:
+        logging.warning("Playwright crawler (google) not found.")
+        crawl_google = None
+
+try:
+    from crawlers.amazon import crawl_amazon
+except ImportError:
+    try:
+        from backend.crawlers.amazon import crawl_amazon
+    except ImportError:
+        logging.warning("Playwright crawler (amazon) not found.")
+        crawl_amazon = None
+
 # ... (start of run_crawler)
 
 import argparse
@@ -566,6 +584,58 @@ def run_crawler():
                         success = True
                     else:
                         logging.error("Morgan Stanley crawler function not imported.")
+
+                elif source_type == "google_official":
+                    if crawl_google:
+                        google_internships = crawl_google(source)
+                        count = 0
+                        for data in google_internships:
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Technology'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    logo_url=data.get('logo_url', "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"),
+                                    international_score=data.get('international_score', 7)
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Google internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Google crawler function not imported.")
+
+                elif source_type == "amazon_official":
+                    if crawl_amazon:
+                        amazon_internships = crawl_amazon(source)
+                        count = 0
+                        for data in amazon_internships:
+                            existing = session.exec(select(Internship).where(Internship.url == data['url'])).first()
+                            if not existing:
+                                internship = Internship(
+                                    company=data['company'],
+                                    role=data['role'],
+                                    location=data.get('location'),
+                                    industry=data.get('industry', 'Technology'),
+                                    ai_label=data.get('ai_label', 0),
+                                    url=data['url'],
+                                    posted_date=data.get('posted_date', datetime.utcnow()),
+                                    logo_url=data.get('logo_url', "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"),
+                                    international_score=data.get('international_score', 6)
+                                )
+                                session.add(internship)
+                                count += 1
+                        logging.info(f"Saved {count} Amazon internships.")
+                        items_saved = count
+                        success = True
+                    else:
+                        logging.error("Amazon crawler function not imported.")
 
                 else:
                     logging.warning(f"Unknown source type: {source_type} for {source['name']}")

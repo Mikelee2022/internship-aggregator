@@ -7,7 +7,7 @@
 
 [English](./README.md) | [简体中文]
 
-一个功能强大的全栈实习信息聚合平台，旨在帮助学生发现、筛选并追踪心仪的实习机会。特别针对 2026 年夏季实习周期进行了优化。
+一个功能强大的全栈实习信息聚合平台，旨在帮助学生发现、筛选并追踪心仪的实习机会。聚合了来自**10家顶级公司**和社区源的**600+实习职位**。特别针对 2026 年夏季实习周期进行了优化。
 
 ---
 
@@ -44,6 +44,8 @@ Internship Aggregator 的核心竞争力在于其**无与伦比的数据丰富�
 | **官方** | [微软 (Microsoft)](https://apply.careers.microsoft.com) | **API** | 实时获取微软官方职业 API 数据。 |
 | **官方** | [摩根大通 (JPMC)](https://www.jpmorganchase.com/careers) | **爬取** | 摩根大通技术项目与实习。 |
 | **官方** | [摩根士丹利 (MS)](https://www.morganstanley.com/careers) | **API** | 摩根士丹利学生技术项目。 |
+| **官方** | [谷歌 (Google Careers)](https://www.google.com/about/careers) | **爬取** | 谷歌软件、硬件和研究实习。 |
+| **官方** | [亚马逊 (Amazon Jobs)](https://www.amazon.jobs) | **爬取** | 亚马逊工程和商业实习。 |
 
 ### 🔍 自动化爬虫架构
 
@@ -58,7 +60,7 @@ Internship Aggregator 的核心竞争力在于其**无与伦比的数据丰富�
 - **前端**: React (Vite), Tailwind CSS, Lucide Icons.
 - **后端**: FastAPI (Python), SQLModel (ORM), Uvicorn.
 - **数据库**: SQLite (本地存储，易于配置)。
-- **自动化**: 基于 BeautifulSoup/Requests 的自定义爬虫。
+- **自动化**: Playwright (浏览器自动化), BeautifulSoup/Requests (HTML 解析)。
 
 ## ⚙️ 快速开始
 
